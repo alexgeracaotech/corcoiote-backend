@@ -1,3 +1,6 @@
 import http from 'node:http';
 
-http.createServer(() => console.log('knocked on the door!')).listen(3000);
+http.createServer((_request, response) => {
+	response.writeHead(200, { 'content-type': 'text/plain' });
+	response.end('Hello World!');
+}).listen(Number(process.env.PORT));
