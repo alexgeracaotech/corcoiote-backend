@@ -1,7 +1,10 @@
 import express from 'express';
+import requestLogger from './middlewares/requestLogger.ts';
 import CustomerRouter from './routes/customer.routes.ts';
 
 const app = express();
+
+app.use(requestLogger);
 
 app.use(express.json());
 
