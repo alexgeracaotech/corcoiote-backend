@@ -7,9 +7,15 @@ export default function errorHandler(
 	response: Response,
 	_next: NextFunction
 ): void {
-	if (error instanceof NotFoundError || error instanceof ValidationError) {
+	if (error instanceof NotFoundError) {
 		response.status(error.statusCode).json({ message: error.message });
 		return;
+	}
+
+	if (error instanceof ValidationError) {
+		response
+			.status(error.statusCode)
+			.json({ message: error.message, fields: error.fields });
 	}
 
 	console.log(error);
