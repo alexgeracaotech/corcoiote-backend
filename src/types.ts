@@ -2,7 +2,8 @@ export type Customer = {
 	id: number;
 	name: string;
 	email: string;
-	status: boolean;
+	imageUrl: string | null;
+	createdAt: Date;
 };
 
 export type ValidationFieldError = {

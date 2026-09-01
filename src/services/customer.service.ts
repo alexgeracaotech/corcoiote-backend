@@ -1,17 +1,17 @@
 import { NotFoundError } from '../errors/index.ts';
-import { customers } from '../mocks/customer.mock.ts';
+import { prisma } from '../lib/prisma.ts';
 import type {
 	CreateCustomer,
 	UpdateCustomer
 } from '../schemas/customer.schema.ts';
 import type { Customer } from '../types.ts';
 
-export function findAllCustomers(): Customer[] {
-	return customers;
+export async function findAllCustomers(): Promise<Customer[]> {
+	return prisma.customer.findMany({ orderBy: { createdAt: 'desc' } });
 }
 
-export function findCustomerById(id: number): Customer {
-	const customer = customers.find((customer) => customer.id === id);
+export async function findCustomerById(id: number): Promise<Customer> {
+	const customer = await prisma.customer.findUnique({ where: { id } });
 
 	if (!customer) {
 		throw new NotFoundError(`Cliente com id ${id} não encontrado.`);
@@ -20,44 +20,27 @@ export function findCustomerById(id: number): Customer {
 	return customer;
 }
 
-export function insertCustomer({ name, email }: CreateCustomer): Customer {
-	const id = customers[customers.length - 1].id;
-
-	const customer: Customer = {
-		id: id + 1,
-		name,
-		email,
-		status: true
-	};
-
-	customers.push(customer);
-
-	return customer;
+export async function insertCustomer({
+	name,
+	email
+}: CreateCustomer): Promise<Customer> {
+	return prisma.customer.create({ data: { name, email } });
 }
 
-export function modifyCustomer(
+export async function modifyCustomer(
 	id: number,
-	{ name, email, status }: UpdateCustomer
-): Customer {
-	const customer = customers.find((customer) => customer.id === id);
+	{ name, email, imageUrl }: UpdateCustomer
+): Promise<Customer> {
+	await findCustomerById(id);
 
-	if (!customer) {
-		throw new NotFoundError(`Cliente com id ${id} não encontrado.`);
-	}
-
-	if (name) customer.name = name;
-	if (email) customer.email = email;
-	if (status !== undefined) customer.status = status;
-
-	return customer;
+	return prisma.customer.update({
+		where: { id },
+		data: { name, email, imageUrl }
+	});
 }
 
-export function removeCustomer(id: number): void {
-	const index = customers.findIndex((customer) => customer.id === id);
+export async function removeCustomer(id: number): Promise<void> {
+	await findCustomerById(id);
 
-	if (index === -1) {
-		throw new NotFoundError(`Cliente com id ${id} não encontrado.`);
-	}
-
-	customers.splice(index, 1);
+	await prisma.customer.delete({ where: { id } });
 }

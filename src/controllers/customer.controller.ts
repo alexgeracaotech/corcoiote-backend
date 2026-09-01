@@ -32,12 +32,12 @@ export function createCustomer(request: Request, response: Response): void {
 
 export function updateCustomer(request: Request, response: Response): void {
 	const id = Number(request.params.id);
-	const { name, email, status } = request.body as UpdateCustomer;
+	const { name, email, imageUrl } = request.body as UpdateCustomer;
 
 	const customer = CustomerService.modifyCustomer(id, {
 		name,
 		email,
-		status
+		imageUrl
 	});
 
 	response.status(200).json(customer);
