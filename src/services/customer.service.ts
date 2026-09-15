@@ -1,5 +1,5 @@
 import { NotFoundError } from '../errors/index.ts';
-import { prisma } from '../lib/prisma.ts';
+import prisma from '../lib/prisma.ts';
 import type {
 	CreateCustomer,
 	UpdateCustomer
@@ -7,7 +7,7 @@ import type {
 import type { Customer } from '../types.ts';
 
 export async function findAllCustomers(): Promise<Customer[]> {
-	return prisma.customer.findMany({ orderBy: { createdAt: 'desc' } });
+	return await prisma.customer.findMany({ orderBy: { createdAt: 'desc' } });
 }
 
 export async function findCustomerById(id: number): Promise<Customer> {
